@@ -183,9 +183,9 @@ $(document).ready(function(){
 				
 				
 </script>
-<link href="http://nai.localhost:82/sites/all/themes/nai/css/jquery.bxslider.css" rel="stylesheet" />
+<link href="http://45.115.99.201/nai/sites/all/themes/nai/css/jquery.bxslider.css" rel="stylesheet" />
 
-<script src="http://nai.localhost:82/sites/all/themes/nai/js/jquery.bxslider.js"></script>
+<script src="http://45.115.99.201/nai/sites/all/themes/nai/js/jquery.bxslider.js"></script>
 
 <script type="text/javascript">
 jQuery(document).ready(function () {
@@ -198,13 +198,12 @@ jQuery(document).ready(function () {
 				slideWidth: 990,
 				minSlides: 1,
 				maxSlides: 1,
-				stopAuto: false,
 				speed: 2500,
                 ease: 'cubic-bezier(0.42,0,0.58,1)',
                 pager: true,
                 controls: true,
 				infiniteLoop: true,
-                autoControlsCombine: false,
+                autoControlsCombine: true,
                 autoControls: true,
                 pause: 100
            });

@@ -738,13 +738,13 @@ function search_index($sid, $module, $text) {
     if (isset($links[$nid])) {
       if ($links[$nid] != $caption) {
         // Update the existing link and mark the node for reindexing.
-//        db_update('search_node_links')
-//          ->fields(array('caption' => $caption))
-//          ->condition('sid', $sid)
-//          ->condition('type', $module)
-//          ->condition('nid', $nid)
-//          ->execute();
-//        search_touch_node($nid);
+        db_update('search_node_links')
+          ->fields(array('caption' => $caption))
+          ->condition('sid', $sid)
+          ->condition('type', $module)
+          ->condition('nid', $nid)
+          ->execute();
+        search_touch_node($nid);
       }
       // Unset the link to mark it as processed.
       unset($links[$nid]);

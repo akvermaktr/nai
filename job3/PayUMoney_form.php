@@ -7,7 +7,7 @@ $SALT = "eCwWELxi";
 // Merchant Key and Salt as provided by Payu.
 
 $PAYU_BASE_URL = "https://sandboxsecure.payu.in";		// For Sandbox Mode
-//$PAYU_BASE_URL = "https://secure.payu.in";			// For Production Mode
+$PAYU_BASE_URL = "https://secure.payu.in";			// For Production Mode
 
 $action = '';
 
@@ -28,6 +28,7 @@ if(empty($posted['txnid'])) {
 } else {
   $txnid = $posted['txnid'];
 }
+echo $txnid; 
 $hash = '';
 // Hash Sequence
 $hashSequence = "key|txnid|amount|productinfo|firstname|email|udf1|udf2|udf3|udf4|udf5|udf6|udf7|udf8|udf9|udf10";
@@ -46,7 +47,7 @@ if(empty($posted['hash']) && sizeof($posted) > 0) {
   ) {
     $formError = 1;
   } else {
-    $posted['productinfo'] = json_encode(json_decode('[{"name":"tutionfee","description":"","value":"500","isRequired":"false"},{"name":"developmentfee","description":"monthly tution fee","value":"1500","isRequired":"false"}]'));
+   // $posted['productinfo'] = json_encode(json_decode('[{"name":"tutionfee","description":"","value":"500","isRequired":"false"},{"name":"developmentfee","description":"monthly tution fee","value":"1500","isRequired":"false"}]'));
 	$hashVarsSeq = explode('|', $hashSequence);
     $hash_string = '';	
 	foreach($hashVarsSeq as $hash_var) {

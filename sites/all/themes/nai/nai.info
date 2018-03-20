@@ -23,8 +23,8 @@ scripts[] = js/jquery.jfontsize-1.0.js
 scripts[] = js/jquery.totemticker.js
 scripts[] = js/jquery.carouFredSel-5.6.4-packed.js
 scripts[] = js/script.js
-scripts[] = js/jquery.bxslider.js
-scripts[] = js/jquery-3.2.1.js
+;scripts[] = js/jquery.bxslider.js
+;scripts[] = js/jquery-3.2.1.js
 
 regions[header] = Header
 regions[help] = Help
