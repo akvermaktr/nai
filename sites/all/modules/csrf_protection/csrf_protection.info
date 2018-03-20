@@ -1,0 +1,5 @@
+name = CSRF Protection
+description = Module to pervent csrf attack
+dependencies[] = services
+core = 7.x
+version =7.x

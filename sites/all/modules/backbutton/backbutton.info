@@ -1,0 +1,4 @@
+name = Back Button
+description = Module to disable back button functionality for security reason.
+core = 7.x
+version =7.x

@@ -1,0 +1,34 @@
+<?php
+
+function custom_menu_menu(){
+	$item[] = array();
+	$item['nodes/view'] =array(
+		'page callback' => 'new_menu',
+		);
+}
+
+function custom_menu_menu_alter(&$items) {
+     // Provides the "updated" values   
+	$items['main-menu']['access callback'] = '_accesscheck';
+    return $items;
+
+     //$loaded_node = node_load($node->nid);
+
+  
+
+}
+//print_r($items);
+
+function new_menu(){
+//$menus = array();
+if ($custom_menus = menu_load_all()) {
+    if (!$all) {
+      $custom_menus = array_diff_key($custom_menus, menu_list_system_menus());
+    }
+    foreach ($custom_menus as $menu_name => $menu) {
+      $custom_menus[$menu_name] = t($menu['title']);
+    }
+    asort($custom_menus);
+  }
+  return $custom_menus;
+}

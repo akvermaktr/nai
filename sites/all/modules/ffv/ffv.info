@@ -1,0 +1,13 @@
+name = Form Validation Fields
+package = CMF
+description = Allows Developer to define custom Code for form field validation.
+core = 7.x
+
+configure = admin/config/development/ct-list
+
+version = "7.x-2.0-alpha3"
+core = "7.x"
+project = "ffv"
+datestamp = "1353872502"
+
+

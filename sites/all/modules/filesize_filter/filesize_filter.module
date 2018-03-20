@@ -1,0 +1,145 @@
+<?php
+// $Id: filesize_filter.module, v 1.2 2011/02/07
+
+
+function _getSizeFile($url) {
+	$url=str_replace( 'http://' . $_SERVER['HTTP_HOST'], '' , $url);
+	$url=str_replace('http://dot.gov.in', '' , $url);
+	$url=str_replace('%28', '(' , $url);
+	$url=str_replace('%29', ')' , $url);
+	$url=str_replace('%26', '&' , $url);
+	$url=str_replace('%2C', ',' , $url);
+	$url=str_replace('%27', '\'' , $url);
+	$url=str_replace('%2E', '\.' , $url);
+	$url=str_replace('%25', '%' , $url);
+	$url=str_replace('%5D', ']' , $url);
+	$url=str_replace('%5B', '[' , $url);
+	$url=str_replace('&amp;', '&' , $url);
+
+	$filename =  $_SERVER['DOCUMENT_ROOT'] .  str_replace('%20', ' ' , $url ) ;
+	$file = fopen( $filename, "r" );
+	if( $file == false )
+	{
+		// echo ( "Error in opening files" );
+		//   exit();
+	} else {
+		$filesize = filesize( $filename );
+		fclose( $file );
+		return $filesize;
+	}
+	$filesize = filesize( $filename );
+	//$filetext = fread( $file, $filesize );
+
+
+
+	//echo ( "File size : $filesize bytes" );
+
+
+	return 0 ;
+}
+
+
+
+function filesize_filter_filter_info() {
+	$filters = array();
+	$filters['creativejuice'] = array(
+			'title' => t('File Size filter'),
+			'description' => t('Enables automatic file size and Icons in Editors'),
+			'process callback' => '_creativejuice_filter_process',
+			'tips callback' => '_creativejuice_filter_tips',
+	);
+	return $filters;
+}
+
+
+function _creativejuice_filter_process($text, $filter, $format){
+
+
+
+	$regexp = "<a\s[^>]*href=(\"??)([^\" >]*?)\\1[^>]*>(.*)<\/a>";
+	if(preg_match_all("/$regexp/siU", $text, $matches, PREG_SET_ORDER))
+	{
+		foreach($matches as $match)
+		{
+			$phrase  = $match[2];
+			$extenM1=substr($match[2],7);
+			$healthy = array("_","@",".");
+			$yummy   = array("[underscore]","[at]","[dot]");
+			$newphrase = str_replace($healthy, $yummy, $extenM1);
+			$extenM=substr($match[2],0,6);
+			if($extenM=="mailto")
+			{
+				$text=str_replace($match[0],$newphrase,$text);
+			}
+
+			$exten=substr($match[2],-4);
+			$startstr=substr($match[2],0,4);
+
+			//print $exten;
+
+			if(($exten=='.pdf') || ($exten=='.PDF') ||($exten=='pdf') || ($exten=='PDF') )
+			{
+				global $base_path;
+				$file=   $match[2];
+				//	print_r($file );
+				$text=str_replace($match[0],"<a  href='$file' target='_blank'  title='A PDF file that opens in new window. To know how to open PDF file refer Help section located at bottom of the site.'>$match[3]<img class='filefield icon' src='" . base_path().  drupal_get_path('module', 'filesize_filter') . "/icons/application-pdf.png' width='12' height='16' alt='[PDF]' border='0'/></a><span class='filefield file-size'>".   format_size(_getSizeFile($file)) ,$text) . '</span>';
+			}
+			if(($exten=='.doc') || ($exten=='.docx') || ($exten=='.DOC') || ($exten=='.DOCX') || ($exten=='doc') || ($exten=='docx') || ($exten=='DOC') || ($exten=='DOCX'))
+			{
+
+				$file=   $match[2];
+
+
+				$text=str_replace($match[0],"<a  href='$file' target='_blank'  title='A Ms-Word file that opens in new window. To know how to open Ms-Word file refer Help section located at bottom of the site.'>$match[3]<img  class='filefield icon'  src='" . base_path().  drupal_get_path('module', 'filesize_filter') . "/icons/x-office-document.png' width='12' height='16' alt='[MSWORD]' border='0'/></a><span class='filefield file-size'>".   format_size(_getSizeFile($file)) ,$text) . '</span>' ;
+			}
+
+			if(($exten=='.xls') || ($exten=='.xlsx') || ($exten=='.XLS') || ($exten=='.XLSX'))
+			{
+				global $base_path;
+				$file=   $match[2];
+
+
+				$text=str_replace($match[0],"<a  href='$file' target='_blank'  title='A Ms-Excel file that opens in new window. To know how to open Ms-Excel file refer Help section located at bottom of the site.'>$match[3]<img class='filefield icon' src='" . base_path().  drupal_get_path('module', 'filesize_filter') . "/icons/x-office-spreadsheet.png' width='12' height='16' alt='[MSExcel]' border='0'/></a><span class='filefield file-size'>".   format_size(_getSizeFile($file)) ,$text) . '</span>';
+			}
+			if(($exten=='.ppt') || ($exten=='.pptx') ||($exten=='ppt') || ($exten=='pptx')  ||($exten=='.PPT') || ($exten=='.PPTX'))
+			{
+				global $base_path;
+				$file=   $match[2];
+				//	print_r($file );
+				$text=str_replace($match[0],"<a  href='$file' target='_blank'  title='A Ms-Power Point  file that opens in new window. To know how to open Ms-Power Point file refer Help section located at bottom of the site.'>$match[3]<img class='filefield icon' src='" . base_path().  drupal_get_path('module', 'filesize_filter') . "/icons/x-office-presentation.png' width='12' height='16' alt='[MSPPT]' border='0'/></a><span class='filefield file-size'>".   format_size(_getSizeFile($file)) ,$text) . '</span>';
+			}
+			if(($exten=='.zip') || ($exten=='.7z') ||($exten=='zgip') || ($exten=='.tar')  ||($exten=='.bz') || ($exten=='.rar'))
+			{
+				global $base_path;
+				$file=   $match[2];
+				//	print_r($file );
+				$text=str_replace($match[0],"<a  href='$file' target='_blank'  title='A Compressed  file that opens in new window. To know how to open Compressed Point file refer Help section located at bottom of the site.'>$match[3]<img class='filefield icon' src='" . base_path().  drupal_get_path('module', 'filesize_filter') . "/icons/package-x-generic.png' width='12' height='16' alt='[ZIP]' border='0'/></a><span class='filefield file-size'>".   format_size(_getSizeFile($file)) ,$text) . '</span>';
+			}
+			if(($exten=='.txt') || ($exten=='.TXT'))
+			{
+				global $base_path;
+				$file=   $match[2];
+				//	print_r($file );
+				$text=str_replace($match[0],"<a  href='$file' target='_blank'  title='A Text file that opens in new window. To know how to open Text file refer Help section located at bottom of the site.'>$match[3]<img class='filefield icon' src='" . base_path().  drupal_get_path('module', 'filesize_filter') . "/icons/text-plain.png' width='12' height='16' alt='[ZIP]' border='0'/></a><span class='filefield file-size'>".   format_size(_getSizeFile($file)) ,$text) . '</span>';
+			}
+			if(($exten=='.RTF') || ($exten=='.rtf'))
+			{
+				global $base_path;
+				$file=   $match[2];
+				//	print_r($file );
+				$text=str_replace($match[0],"<a  href='$file' target='_blank'  title='A RTF file that opens in new window. To know how to open Text file refer Help section located at bottom of the site.'>$match[3]<img class='filefield icon' src='" . base_path().  drupal_get_path('module', 'filesize_filter') . "/icons/text-plain.png' width='12' height='16' alt='[ZIP]' border='0'/></a><span class='filefield file-size'>".   format_size(_getSizeFile($file)) ,$text) . '</span>';
+			}
+
+
+		} // foreach
+	}// main if
+
+
+
+	return $text;
+
+
+}
+
+
+?>

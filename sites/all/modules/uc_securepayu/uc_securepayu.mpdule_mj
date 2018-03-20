@@ -1,0 +1,270 @@
+<?php
+/*
+* uc_securepayu module
+* Upgraded to support Drupal 7
+*/
+
+function uc_securepayu_menu() {
+  $items = array();
+
+  $items['cart/securepayu/complete'] = array(
+      'title' => 'Order complete',
+      'page callback' => 'uc_securepayu_complete',
+      //'page arguments' => array(),
+      'access callback' => TRUE,//array('uc_securepayu_completion_access'),
+      'type' => MENU_CALLBACK,
+      'file' => 'uc_securepayu.pages.inc',
+  );
+
+  return $items;
+}
+
+/**
+ * Implementation of hook_init().
+ */
+function uc_securepayu_init() {
+  global $conf;
+  $conf['i18n_variables'][] = 'uc_securepayu_method_title';
+  $conf['i18n_variables'][] = 'uc_securepayu_checkout_button';
+}
+
+/**
+ * Make sure anyone can complete their securepayu orders.
+ */
+/*
+Unnecessary Function 
+function uc_securepayu_completion_access() {
+  return TRUE;
+}*/
+
+/**
+ * Implementation of hook_ucga_display().
+ */
+function uc_securepayu_ucga_display() {
+  // Tell UC Google Analytics to display the e-commerce JS on the custom
+  // order completion page for this module.
+  if (arg(0) == 'cart' && arg(1) == 'securepayu' && arg(2) == 'complete') {
+    return TRUE;
+  }
+}
+
+/**
+ * Implementation of hook_form_alter().
+ */
+function uc_securepayu_form_alter(&$form, $form_state, $form_id) {
+  if ($form_id == 'uc_cart_checkout_review_form' && ($order_id = intval($_SESSION['cart_order'])) > 0) {
+    $order = uc_order_load($order_id);
+    if ($order->payment_method == 'securepayu') {
+      drupal_add_css(drupal_get_path('module', 'uc_securepayu') . '/uc_securepayu.css');
+      //unset($form['submit']);
+      unset($form['actions']['submit']); 
+      $spayuForm = drupal_get_form('uc_securepayu_form', $order); 
+      $form['#prefix'] = '<table id="two-checkout-review-table"><tr><td>';
+      //$form['#suffix'] = '</td><td>' . drupal_get_form('uc_securepayu_form', $order) . '</td></tr></table>';
+      $form['#suffix'] = '</td><td>' . drupal_render($spayuForm). '</td></tr></table>';      
+    }
+  }
+}
+
+/**
+ * Implementation of hook_payment_method().
+ *
+ * @see uc_payment_method_securepayu()
+ */
+function uc_securepayu_uc_payment_method() {
+  $path = base_path() . drupal_get_path('module', 'uc_securepayu');
+  $title = variable_get('uc_uc_securepayu_method_title', t('Online Payment through Payu:'));
+  $title .= '<br /><img src="' . $path . '/logo.gif" style="position: relative; left: 2.5em;" />';
+
+  $methods[] = array(
+      'id' => 'securepayu',
+      'name' => t('Securepayu'),
+      'title' => $title,
+      'desc' => t('Redirect to Securepayu to pay by credit card or netbanking.'),
+      'callback' => 'uc_payment_uc_method_securepayu',
+      'weight' => 3,
+      'checkout' => TRUE,
+      'no_gateway' => TRUE,
+  );
+
+  return $methods;
+}
+
+function uc_payment_uc_method_securepayu($op, &$arg1, $form = NULL, &$form_state = NULL) {
+  switch ($op) {
+    case 'cart-details':              
+      if (variable_get('uc_securepayu_check', FALSE)) {
+        if ($_SESSION['pay_method'] == 'CK') {
+          $sel = 'CK';
+        }
+        else {
+          $sel = 'CC';
+        }
+        unset($_SESSION['pay_method']);
+        $build = array(
+          '#type' => 'select',
+          '#title' => t('Select your payment type:'),
+          '#name' => 'pay_method',
+          '#id' => 'edit-pay-method',
+          '#attributes' => array('class' => array('form-select')),
+          '#default_value' => $sel,
+          '#options' => array(
+            'CC' => t('Credit card'),
+            'CK' => t('Online check'),
+          ),
+        );
+		return $build;
+      }
+      return ;        
+
+    case 'cart-process':
+      $_SESSION['pay_method'] = $form_state['values']['panes']['payment']['payment_method'];
+      return;        
+
+    case 'settings':
+      $form['uc_securepayu_key'] = array(
+          '#type' => 'textfield',
+          '#title' => t('key'),
+          '#description' => t('key'),
+          '#default_value' => variable_get('uc_securepayu_key', 'paysalt'),
+          '#size' => 6,
+      );
+      $form['uc_securepayu_secret_salt'] = array(
+          '#type' => 'textfield',
+          '#title' => t('Payu Salt'),
+          '#description' => t('Payu salt'),
+          '#default_value' => variable_get('uc_securepayu_secret_salt', 'payusalt'),
+          '#size' => 8,
+      );
+      $form['uc_securepayu_language'] = array(
+          '#type' => 'select',
+          '#title' => t('Language preference'),
+          '#description' => t('Adjust language on Securepayu pages.'),
+          '#options' => array(
+              'en' => t('English'),
+          ),
+          '#default_value' => variable_get('uc_securepayu_language', 'en'),
+      );
+
+      $form['uc_securepayu_method_title'] = array(
+          '#type' => 'textfield',
+          '#title' => t('Payment method title'),
+          '#description' => t('This title will be shown at the checkout page.'),
+          '#default_value' => variable_get('uc_securepayu_method_title', t('Online Payment on a Secure Server:')),
+      );
+
+      $form['uc_securepayu_checkout_button'] = array(
+          '#type' => 'textfield',
+          '#title' => t('Order review submit button text'),
+          '#description' => t('Provide securepayu specific text for the submit button on the order review page.'),
+          '#default_value' => variable_get('uc_securepayu_checkout_button', t('Submit Order')),
+      );
+
+      $form['uc_securepayu_checkout_mode'] = array(
+          '#type' => 'select',
+          '#title' => t('payu checkout mode'),
+          '#description' => t('Mode of Transaction. Select TEST for Testing and select LIVE when your account is made LIVE from payu'),
+          '#options' => array(
+              'TEST' => t('TEST'),
+              'LIVE' => t('LIVE'),
+          ),
+          '#default_value' => variable_get('uc_securepayu_checkout_mode', 'TEST'),
+      );
+      return $form;
+  }
+}
+
+function uc_securepayu_form($form, $form_state, $order) {
+  $country = uc_get_country_data(array('country_id' => $order->billing_country));
+  if ($country === FALSE) {
+    $country = array(0 => array('country_iso_code_3' => 'IND'));
+  }
+  $deliverycountry = uc_get_country_data(array('country_id' => $order->delivery_country));
+  if ($deliverycountry === FALSE) {
+    $deliverycountry = array(0 => array('country_iso_code_3' => 'IND'));
+  }
+
+  $context = array(
+      'revision' => 'formatted-original',
+      'type' => 'order_total',
+      'subject' => array(
+          'order' => $order,
+      ),
+  );
+  $options = array(
+      'sign' => FALSE,
+      'dec' => '.',
+      'thou' => FALSE,
+  );
+
+
+  $dr = "DR={DR}";
+  $key = variable_get('uc_securepayu_key', '');
+  $salt = variable_get('uc_securepayu_secret_salt', '');
+  $txnid = $order->order_id;
+  $firstname = substr($order->billing_first_name, 0, 128);
+  $lastname = substr($order->billing_last_name, 0, 128);
+  $address1 = substr($order->billing_street1, 0, 64);
+  $address2 = substr($order->billing_street2, 0, 64);
+  $productinfo = 'ubercart products information';
+  $amount = uc_currency_format($order->order_total, FALSE, FALSE, '.');
+  $zipcode = substr($order->billing_postal_code, 0, 16);
+  $city = substr($order->billing_city, 0, 64);
+  $state = uc_get_zone_code($order->billing_zone);
+  $country = $country[0]['country_iso_code_3'];
+  $email = substr($order->primary_email, 0, 64);
+  $phone = substr($order->billing_phone, 0, 16);
+  
+  $surl = url('cart/securepayu/complete/',array('absolute' => TRUE)). $order->order_id.'/DR={DR}';  
+  $furl = url('cart/securepayu/complete/',array('absolute' => TRUE)). $order->order_id.'/DR={DR}';  
+  $curl = url('cart/securepayu/complete/',array('absolute' => TRUE)). $order->order_id.'/DR={DR}';  
+  
+  
+  $pg = isset($_SESSION['pay_method']) ? $_SESSION['pay_method'] : 'CC';
+  $string = $key . '|' . $txnid . '|' . $amount . '|' . $productinfo . '|' . $firstname . '|' . $email . '|||||||||||' . $salt;
+  $hash = strtolower(hash('sha512', $string));
+  $data = array(
+      'key' => $key,
+      'txnid' => $txnid,
+      'firstname' => $firstname,
+      'lastname' => $lastname,
+      'address1' => $address1,
+      'address2' => $address2,
+      'productinfo' => $productinfo,
+      'amount' => $amount,
+      'zipcode' => $zipcode,
+      'city' => $city,
+      'state' => $state,
+      'country' => $country,
+      'email' => $email,
+      'phone' => $phone,
+      'surl' => $surl,
+      'furl' => $furl,
+      'curl' => $curl,
+      'pg' => $pg,
+      'hash' => $hash
+  );
+  $form['#action'] = _securepayu_post_url(variable_get('uc_securepayu_checkout_mode', 'TEST'));
+
+  foreach ($data as $name => $value) {
+    $form[$name] = array(
+    '#type' => 'hidden', 
+    '#value' => $value
+    );
+  } 
+  $form['actions'] = array('#type' => 'actions');
+  $form['actions']['submit'] = array(
+      '#type' => 'submit',
+      '#value' => variable_get('uc_securepayu_checkout_button', t('Submit Order')),
+  );  
+  return $form;
+}
+
+function _securepayu_post_url($type) {
+
+  if ($type == 'LIVE')
+    return 'https://secure.payu.in/_payment.php';
+
+  else
+    return 'https://test.payu.in/_payment.php';
+}

@@ -1,0 +1,13 @@
+<?php
+
+/**
+ * @file
+ * Uninstall functions for the file_mime_type_checker module.
+ */
+
+/**
+ * Implements hook_uninstall().
+ */
+function file_mime_type_checker_uninstall() {
+  variable_del('file_mime_type_checker');
+}

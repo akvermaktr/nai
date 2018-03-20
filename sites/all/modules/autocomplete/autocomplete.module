@@ -1,0 +1,25 @@
+<?php
+function autocomplete_form_alter(&$form, &$form_state, $form_id) {
+	//$form['#attributes']['autocomplete'] = 'off';
+	
+	if($form_id == 'webform_client_form_1341'){
+	//drupal_set_message($form_id);
+	$form['#attributes'][]['autocomplete'] = 'off';
+	//submitted[name]
+	}
+
+if($form_id == 'user_login'){
+
+$form['name']['#attributes'] =array(
+'oncopy' => "return false", 
+'ondrag'=>"return false",
+'ondrop'=>"return false",
+'onpaste'=>"return false");
+
+$form['pass']['#attributes'] =array( 
+'oncopy' => "return false", 
+'ondrag'=>"return false",
+'ondrop'=>"return false",
+'onpaste'=>"return false");
+}
+}

@@ -1,0 +1,7 @@
+name = Application form
+description = "Application form module for website"
+core = 7.x
+package = NCM Custom Module 
+
+; Information added by GAurav Sharma (DRupa Developer NCM Pvt. Ltd.)packaging script on 2016-08-04
+

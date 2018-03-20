@@ -1,0 +1,7 @@
+name = Qualification Template
+description = Custom Template for Qualification Entity Field
+core = 7.x
+package = custom
+php = 5.x
+version = 7.x
+

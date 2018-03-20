@@ -1,0 +1,38 @@
+/* $Id $ */
+
+a#text_resize_increase {
+  background: url(aBig.png) no-repeat 0 0;
+  display: block;
+  float: right;
+  width: 28px;
+  height: 14px;
+/*   margin: 6px 0 0 0; */
+  outline: none;
+  text-indent: -9000px;
+  cursor: pointer;
+}
+a#text_resize_reset {
+  background: url(a_reset.png) no-repeat 0 0;
+  display: block;
+  float: right;
+  width: 25px;
+  height: 14px;
+  /* margin: 9px 0 0 3px; */
+  outline: none;
+  text-indent: -9000px;
+  cursor: pointer;
+}
+a#text_resize_decrease {
+  background: url(aSmall.png) no-repeat 0 0;
+  display: block;
+  float: right;
+  width: 23px;
+  height: 14px;
+  /* margin: 12px 0 0 3px; */
+  outline: none;
+  text-indent: -9000px;
+  cursor: pointer;
+}
+#text_resize_clear {
+  clear: both;
+}

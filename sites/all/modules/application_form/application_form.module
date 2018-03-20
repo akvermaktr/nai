@@ -1,0 +1,23 @@
+<?php
+function application_form_permission() {
+  return array(
+    'Application form' => array(
+      'title' => t('Application form'),
+      'description' => t('Smart Grid Pilot Project Data Management Module permission set for users/Roles.'),
+	  'restrict access' => TRUE,
+    ),
+  );
+}
+function application_form_menu() {
+   $items = array();
+  $items['2page/application'] = array(
+    'title' => 'application form',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('application_management_form'),
+    'access arguments' => array('Application form'),// using to set permission for the module(role-wise)
+    'description' => 'A set of NCM custom module',
+    'file' => 'application_form_layout.inc',
+    'type' => MENU_NORMAL_ITEM,
+  );
+return $items;
+}

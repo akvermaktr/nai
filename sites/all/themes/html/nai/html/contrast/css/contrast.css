@@ -1,0 +1,63 @@
+@charset "utf-8";
+/* CSS Document */
+body{ background-color:#262c33!important; color:#FFF!important;}
+.main{ border:1px solid #555;background-color:#444444;}
+p{ color:#FFF!important;}
+a{ color:#FF0!important;}
+.tab-content{ background-color:#555!important;}
+.tab-content ol li{ color:#FFF;}
+.header{ background:#3e3e3e;}
+.main .header .top-header{ border-bottom:1px solid #000;}
+.main .header .top-header ul li a{ color:#000000;}
+.search-box input[type="text"]{ border:1px solid #000; background:#555; color:#FFF;}
+.search-box input[type="search"]{ background:url(../images/search-icon.png) no-repeat;}
+.main .nav{background-color:#555;}
+.main .nav ul li a{ color:#434343;}
+.main .nav ul li:hover{ background:#000!important;}
+.nav ul li ul li{background-color:#555; border-bottom:1px solid #FFF;}
+
+.what-new{background:#555;border:1px solid #000;}
+.what-new h3{ background:#3e3e3e; color:#FFF;}
+.what-new .new-box ul li{ border-bottom:1px solid #000;}
+.what-new .new-box ul li a{ display:block; color:#666666; background:url(../images/arrow2.png) left 13px no-repeat;}
+.what-new .view{ color:#666666;}
+.news{ border:1px solid #000; background:#f1f1f1;}
+.news span{ color:#FFF; background:#3e3e3e;}
+
+.full-right-panel h3.title{ background-color:#3e3e3e; color:#FFF;}
+
+.mid .left-panel-box{}
+.mid .left-panel-box h2{background-color:#3e3e3e; color:#FFF;}
+.mid .left-panel-box .inner-left-box h3{ border-bottom:1px solid #000;}
+
+.mid .left-panel-box .ui-corner-top, .mid .left-panel-box .ui-corner-all{background:url(../images/arrow57.png) 95% center no-repeat!important; height:15px;width:15px;}
+.mid .left-panel-box .inner-left-box{background-color:#555!important; border-left:1px solid #000;border-right:1px solid #000;}
+.mid .left-panel-box .ui-state-active{ background:url(../images/arrow58.png) 95% center no-repeat!important; height:15px;width:15px;}
+.mid .left-panel-box .inner-left-box ul li{background-color:#3e3e3e!important;border-bottom:1px solid #000;}
+.mid .left-panel-box .inner-left-box ul li a{ color:#000; background:url(../images/arrow-u.png) no-repeat 13px center;}
+
+.mid .left-panel-box .related-link ul li a{ color:#FFF; }
+.mid .left-panel-box .related-link ul li.even{background:#202020;}
+.mid .left-panel-box .related-link ul li.odd{background:#555;}
+
+.museum-link h3{background-color:#555; color:#FFF;}
+.ui-corner-top, .ui-corner-all{ background:url(../images/arrow.png) 95% center no-repeat; height:18px;width:18px;}
+.ui-state-active{ background:url(../images/arrow56.png) 95% center no-repeat; height:18px;width:18px;}
+#stop{ background:url(../images/pause.png) 95% center no-repeat; height:12px;width:12px; display:inline-block;text-indent:-999999px;}
+#start{ background:url(../images/play.png) 95% center no-repeat; height:12px;width:16px;display:inline-block; text-indent:-999999px;}
+/* liScroll styles */
+.tickercontainer {background-color:#555;color:#FFF;}
+.er-controls{background:#3e3e3e;}
+.er-controls .pause{ background:url(../images/pause2.png) no-repeat;}
+.er-controls .play{ background:url(../images/play2.png) no-repeat;}
+.tab-content{ color:#000;}
+.tab-box{ border-bottom:2px solid #3e3e3e;}
+.nav-tabs li{ background:#3e3e3e; }
+.nav-tabs > li.active{ background:#555;}
+.nav-tabs li a{color:#FFF;border-left:1px solid #000;}
+.view1{ color:#978044;}
+.right-box .in-focus p{background:#000; color:#FFF;}
+.footer{ border-top:1px solid #000;}
+.footer ul li a{ color:#212528; background:url(../images/line.png) 100% center no-repeat;}
+.footer .footer-box .footerbox-left{ color:#978044;}
+.footer .footer-box .footerbox-right{ color:#978044;}

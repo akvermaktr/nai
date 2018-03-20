@@ -1,0 +1,25 @@
+
+.tab-box{ border-bottom:2px solid #b80028;}
+.tab-box{ float:left; margin:15px 0; padding:0; width:100%; min-height:300px;}
+
+
+.quicktabs-tabs.quicktabs-style-garland li{ background:#ffa946; }
+.quicktabs-tabs.quicktabs-style-garland > li.active{ background:#ef8914;}
+.quicktabs-tabs.quicktabs-style-garland li a{color:#FFF; font-weight:300}
+
+.tab-box{ float:left; margin:10px 0; padding:0; width:100%; min-height:300px;}
+.quicktabs-tabs.quicktabs-style-garland > li > a {display: block;}
+.quicktabs-tabs.quicktabs-style-garland:before, .quicktabs-tabs.quicktabs-style-garland:after {display: table;content: "";}
+.quicktabs-tabs.quicktabs-style-garland:after {clear: both;}
+.quicktabs-tabs.quicktabs-style-garland > li {float: left;}
+.quicktabs-tabs.quicktabs-style-garland> li > a {padding-right:10px;padding-left:10px;margin-right:2px;line-height:14px;font-size:12px;text-align:center;text-decoration:none;padding-top:15px;padding-bottom:15px;}
+.quicktabs-tabs.quicktabs-style-garland > li {margin-bottom: -1px;}
+
+.tab-box{ font-size:85%; margin:0; padding:0; overflow:hidden; min-height:304px; position:relative;}
+.tab-box.active{display: block;}
+.tab-box.hide{display: none;}
+.tab-box ol{ margin:22px 0 0 0;}
+.tab-box ol li{ margin:0; padding:5px 0 5px 18px;}
+.tab-box p{ padding:5px 0;}
+.tab-box ol li a{ color:#000000; text-decoration:none;}
+

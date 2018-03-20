@@ -1,0 +1,75 @@
+
+name = NAI
+description = A flexible, recolorable theme with many regions.
+package = Core
+version = VERSION
+core = 7.x
+
+stylesheets[all][] = css/blue.css
+stylesheets[all][] = css/style.css
+stylesheets[all][] = css/media-css.css
+stylesheets[print][] = css/print.css
+stylesheets[all][] = css/slicknav.css
+stylesheets[all][] = css/jquery.bxslider.css
+
+
+
+scripts[] = js/jquery-1.11.3.min.js
+scripts[] = js/jquery.slicknav.js
+scripts[] = js/modern-ticker.js
+scripts[] = js/endlessRiver.js
+scripts[] = js/jquery-ui-1.10.4.custom.js
+scripts[] = js/jquery.jfontsize-1.0.js
+scripts[] = js/jquery.totemticker.js
+scripts[] = js/jquery.carouFredSel-5.6.4-packed.js
+scripts[] = js/script.js
+scripts[] = js/jquery.bxslider.js
+scripts[] = js/jquery-3.2.1.js
+
+regions[header] = Header
+regions[help] = Help
+regions[page_top] = Page top
+regions[page_bottom] = Page bottom
+regions[navigation] = Navigation
+regions[outer_images] = Outer Images
+regions[highlighted] = Highlighted
+regions[banner] = Banner
+
+regions[footer_slider] = Footer Slider
+regions[footer] = Footer
+regions[media_gallery] = Media Gallery
+regions[left_sidebar] = Left Sidebar
+regions[acts_sidebar] = Acts Sidebar
+regions[last_page_updated] = Last Page Updated
+
+
+regions[right_bottom] = Right bottom
+regions[right_bottom1] = Right bottom1
+regions[featured] = Featured
+regions[content] = Content
+regions[sidebar_first] = Sidebar first
+regions[sidebar_second] = Sidebar second
+regions[announcement] = Announcement
+regions[in_focus] = In Focus
+regions[text_size] = Text Size
+regions[middle_menu] = Middle Menu
+regions[triptych_last] = Triptych last
+regions[header_top_left] = Header Top Left
+regions[header_top_right] = Header Top Right
+regions[search] = Search
+regions[header_logo_left] = Header Logo Left
+regions[header_logo_right] = Header Logo Right
+
+regions[footer_firstcolumn] = Footer first column
+regions[footer_secondcolumn] = Footer second column
+regions[footer_thirdcolumn] = Footer third column
+regions[footer_fourthcolumn] = Footer fourth column
+
+settings[shortcut_module_link] = 0
+
+
+; Information added by Drupal.org packaging script on 2015-06-17
+version = "7.38"
+project = "drupal"
+datestamp = "1434567286"
+

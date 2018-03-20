@@ -1,0 +1,7 @@
+
+name = File Size Filter
+description = "This module add a file type icon and size with every file links"
+package = Pro Drupal Development
+core = 7.x
+files[] = filesize_filter.module
+php = 5.2

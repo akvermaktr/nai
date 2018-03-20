@@ -1,0 +1,4 @@
+name = custom Encryption
+description = Custom Module to encrypt user password
+core = 7.x
+version = 7.x

@@ -1,0 +1,7 @@
+name = Manage Courses
+description = "Manage Courses Management Module"
+core = 7.x
+package = Manage Courses Management Module
+
+; Information added by Gaurav Sharma (Drupal Developer NCM Pvt. Ltd.)packaging script on 2017-07-31
+

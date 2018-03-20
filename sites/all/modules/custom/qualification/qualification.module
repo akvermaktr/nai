@@ -1,0 +1,67 @@
+
+<?php
+function qualification_form_alter(&$form, &$form_state, $form_id) {
+//print_r($form_id);
+	if($form_id == 'application_node_form' ) {
+	       $form['field_cource_applied_for']['und'][0]['nid']['#default_value']  = 410;
+               $form['field_cource_applied_for']['#attributes']['disabled']='disabled'; 
+//		print_r($form); 
+
+	}
+
+
+    switch($form_id) {
+        case 'uc_cart_view_form':
+//           print_r($form); 
+
+            $items = uc_cart_get_contents();
+            for($i = 0; $i < count($items); $i++) {
+            //if(isset($form['items'][$i]['#entity']->type) && $form['items'][$i]['#entity']->type == 'CONTENT_TYPE_NAME') {
+            $form['items'][$i]['qty']['#disabled'] = true;
+            }
+    }
+
+}
+
+/**
+ * Implements hook_uc_add_to_cart().
+ */
+function qualification_uc_add_to_cart($nid, $qty, $data) {
+  $limit = variable_get('uc_restrict_qty_global', 0);
+  $replacecart = variable_get('uc_restrict_qty_global_replace', FALSE);
+  $result = NULL; // added by Jeff
+
+  // If a global restriction on the number of items has been made.
+  if ($limit > 0) {
+    if (count(uc_cart_get_contents()) >= $limit) {
+      if ($replacecart) {
+        db_query("DELETE FROM {uc_cart_products} WHERE cart_id = :cart", array(':cart' => uc_cart_get_id()));
+        $result[] = array('success' => TRUE);
+      }
+      else {
+        $message = format_plural($limit, 'You have already applied for the job. Please complete your payment process at ' . l('Payment' , 'cart')    );
+
+        $result[] = array(
+          'success' => FALSE,
+          'message' => $message,
+        );
+      }
+    }
+  }
+
+  // Check lifetime product-level limit.
+  if ($data['restrict_qty']['lifetime']) {
+    if (!$data['restrict_qty']['rest']) {
+      $message = t('Sorry, you have reached the quantity limit for this product. You can not order more items of this product.');
+
+      $result[] = array(
+      'success' => FALSE,
+      'message' => $message,
+      );
+    }
+  }
+  return $result;
+}
+
+
+?>

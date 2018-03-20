@@ -1,0 +1,54 @@
+
+name = contrast
+description = A flexible, recolorable theme with many regions.
+package = Core
+version = VERSION
+core = 7.x
+ base theme=nai
+stylesheets[all][] = css/contrast.css
+
+
+regions[header] = Header
+regions[help] = Help
+regions[page_top] = Page top
+regions[page_bottom] = Page bottom
+regions[navigation] = Navigation
+regions[highlighted] = Highlighted
+regions[banner] = Banner
+regions[outer_images] = Outer Images
+regions[footer_slider] = Footer Slider
+regions[footer] = Footer
+regions[media_gallery] = Media Gallery
+regions[left_sidebar] = Left Sidebar
+regions[acts_sidebar] = Acts Sidebar
+
+regions[right_bottom] = Right bottom
+regions[featured] = Featured
+regions[content] = Content
+regions[sidebar_first] = Sidebar first
+regions[sidebar_second] = Sidebar second
+regions[announcement] = Announcement
+regions[in_focus] = In Focus
+regions[text_size] = Text Size
+regions[triptych_middle] = Triptych middle
+regions[middle_menu] = Middle Menu
+regions[triptych_last] = Triptych last
+
+regions[footer_firstcolumn] = Footer first column
+regions[footer_secondcolumn] = Footer second column
+regions[footer_thirdcolumn] = Footer third column
+regions[footer_fourthcolumn] = Footer fourth column
+regions[header_top_left] = Header Top Left
+regions[header_top_right] = Header Top Right
+regions[header_logo_left] = Header Logo Left
+regions[header_logo_right] = Header Logo Right
+regions[search] = Search
+
+settings[shortcut_module_link] = 0
+
+
+; Information added by Drupal.org packaging script on 2015-06-17
+version = "7.38"
+project = "drupal"
+datestamp = "1434567286"
+

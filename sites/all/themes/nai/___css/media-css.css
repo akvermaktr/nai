@@ -1,0 +1,55 @@
+
+@media screen and (max-width: 1012px) {
+.main{ width:99%;}
+.container{ width:99%!important; margin:auto;}
+.main .nav ul li{ padding:0 1.9%;}
+.nav-tabs > li > a{font-size: 13px;line-height: 14px;margin-right: 2px;padding:15px 5px;text-align: center;text-decoration: none;}
+.right-box .in-focus{ width:100%; margin:0 0 5px 0;height:auto;}
+.right-box .museum-link{width:100%; margin:0 0 5px 0;}
+.ui-accordion .ui-accordion-header{ margin:5px 0 5px 0; width:95%;}
+.right-box .in-focus img{max-width:100%;}
+.main .header .logo{ padding:9px 0;}
+.link-box ul li{ padding:0; width:33.333333%;}
+.link-box ul li img{ max-width:100%;}
+.banner{ height:auto;}
+
+}
+
+@media screen and (max-width: 799px) {
+.access, .nav{ display:none;}
+.slicknav_menu{ display:block;}
+.main .header{ margin:0 0 7px 0;}
+.main .header .logo{ width:50%;}
+.main .header .header-right{ width:50%;}
+.main .header .header-right ul li{ float:left;width:50%; padding:0;}
+.nav-tabs > li > a{ padding:15px 10%; font-size:11px;}
+.banner{ width:100%;}
+.banner img{ width:100%;}
+.what-new{ width:100%; margin:0 0 5px;}
+.what-new h3{ margin:0; padding:10px;}
+
+}
+
+
+@media screen and (max-width:647px) {
+.banner{ height:auto; margin:0 0 1px 0;}
+.left-part, .right-box{ width:100%;}
+.what-new{ width:100%;}
+.news{ margin:10px 0 0 0;}
+.nav-tabs > li{ width:50%; margin:0 0 3px 0;}
+.nav-tabs > li > a{ font-size:14px;}
+.in-focus{ float:left; width:48%!important; margin:0 0 0 1%!important;}
+
+}
+
+@media screen and (max-width:360px) {
+.footerbox-left, .footerbox-mid, .footerbox-right{width:100%!important;float:none!important; margin:0 0 5px 0!important; text-align:center!important; padding:3px 0;}
+.search-box{ margin:6px auto 0; padding:0;}
+.main .header .logo{ width:96%;}
+.main .header .header-right{width:100%;}
+.main .header .header-right{ padding:6px 0 6px;}
+.news span{font-size:11px;height: 26px;word-wrap: break-word;text-align: center; padding-top:9px;}
+.search-box input[type="search"]{border: medium none;cursor: pointer;height:17px;position:absolute;right:9px;top:3px;width:17px;}
+.search-box input[type="text"]{ width:298px!important;}
+
+}

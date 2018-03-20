@@ -1,0 +1,66 @@
+<?php
+/**
+ * @file
+ * Foem Maker module install/schema hooks.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function manage_courses_schema() {
+  $schema['manage_courses'] = array(
+    'description' => 'The table for the Smart Grid Pilot Project Data Management Module.',
+    'fields' => array(
+      'id' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      
+      'cource_applied_category' => array(
+        'type' => 'varchar',
+        'length' => 220,
+        'not null' => TRUE,
+      ),
+      'cource_term' => array(
+        'type' => 'varchar',
+        'length' => 220,
+        'not null' => TRUE,
+      ),
+      'date' => array(
+        'type' => 'varchar',
+        'length' => 220,
+        'not null' => TRUE,
+        'default_value' => '',
+      ),
+	  'status' => array(
+        'type' => 'varchar',
+        'length' => 220,
+        'not null' => TRUE,
+        'default_value' => '',
+      ),
+      'price' => array(
+        'type' => 'varchar',
+        'length' => 220,
+        'not null' => TRUE,
+        'default_value' => '',
+      ),
+	  'course_code' => array(
+        'type' => 'varchar',
+        'length' => 220,
+        'not null' => TRUE,
+        'default_value' => '',
+      ),
+	 ),
+    'primary key' => array('id'),
+  );
+
+  return $schema;
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function manage_courses_uninstall() {
+  drupal_uninstall_schema('manage_courses');
+}

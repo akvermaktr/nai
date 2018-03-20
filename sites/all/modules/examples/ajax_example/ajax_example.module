@@ -1,0 +1,53 @@
+<?php
+
+/**
+ * @file
+ * AJAX Examples module file with basic examples.
+ */
+
+/**
+ * @defgroup ajax_example Example: AJAX
+ * @ingroup examples
+ * @{
+ * These examples show basic AJAX concepts.
+ *
+ * General documentation is available at
+ * @link ajax AJAX Framework documentation @endlink and at the
+ * @link http://drupal.org/node/752056 AJAX Forms handbook page @endlink.
+ *
+ * The several examples here demonstrate basic AJAX usage.
+ */
+
+// The Node Form Alter example needs to be in another file.
+module_load_include('inc', 'ajax_example', 'ajax_example_node_form_alter');
+
+/**
+ * Implements hook_menu().
+ *
+ * Sets up calls to drupal_get_form() for all our example cases.
+ *
+ * @see menu_example.module
+ * @see menu_example_menu()
+ */
+function ajax_example_menu() {
+  $items = array();
+
+  
+
+  // Add-more button that creates additional form elements.
+  // See ajax_example_graceful_degradation.inc.
+  $items['1page/application'] = array(
+    'title' => '',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ajax_example_add_more'),
+    'access callback' => TRUE,
+    'file' => 'ajax_example_graceful_degradation.inc',
+    'weight' => 8,
+  );
+  return $items;
+}
+
+/**
+ * A basic introduction page for the ajax_example module.
+ */
+

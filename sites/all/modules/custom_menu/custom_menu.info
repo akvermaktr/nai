@@ -1,0 +1,9 @@
+name = custom menu
+description = "Provides a menu to other common destinations"
+core = 7.x
+
+version = "7.x-3.0"
+core = "7.x"
+project = "custom_menu"
+datestamp = "1419029284"
+

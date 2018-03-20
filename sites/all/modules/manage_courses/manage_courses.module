@@ -1,0 +1,35 @@
+<?php
+function manage_courses_permission() {
+  return array(
+    'Manage Courses Management Module' => array(
+      'title' => t('Manage Courses Management Module'),
+      'description' => t('Manage Courses Management Module.'),
+	  'restrict access' => TRUE,
+    ),
+  );
+}
+function manage_courses_menu() {
+   $items = array();
+  $items['manage_courses'] = array(
+    'title' => 'Manage Courses Management Module',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('manage_courses_management_form'),
+    'access arguments' => array('Manage Courses Management Module'),// using to set permission for the module(role-wise)
+    'file' => 'manage_courses_project.inc',
+    'type' => MENU_NORMAL_ITEM,
+  );
+  $items['manage_courses_list'] = array(
+        'title' => 'Manage Courses List',
+        'page callback' => 'manage_course_list',
+        'access arguments' => array('Manage Courses List'),
+		'file' => 'manage_courses_project.inc',
+  );
+  $items['get_list_of_applied_student'] = array(
+        'title' => 'Get List Of Applied Students',
+        'page callback' => 'get_list_of_applied_student1',
+        'access arguments' => array('Manage Courses Management Module'),
+		'file' => 'get_list_of_applied.inc',
+  );
+return $items;
+}
+

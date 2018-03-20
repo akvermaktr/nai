@@ -1,0 +1,487 @@
+<?php
+/**
+ * @file
+ * Hook implementations for Cacheable CSRF.
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function cacheable_csrf_menu() {
+  $items['cacheable-csrf'] = array(
+    'type' => MENU_CALLBACK,
+    'page callback' => 'cacheable_csrf_set_token',
+    'access arguments' => array('access content'),
+  );
+  return $items;
+}
+
+/**
+ * Implements hook_page_build().
+ */
+function cacheable_csrf_page_build(&$page) {
+  if (cacheable_csrf_get_paths()) {
+    $page['footer']['#attached']['js'][] = drupal_get_path('module', 'cacheable_csrf') . '/js/cacheable_csrf.js';
+    $page['footer']['#attached']['library'][] = array('system', 'jquery.cookie');
+  }
+}
+
+/**
+ * Get the paths to replace CSRF handling for.
+ */
+function cacheable_csrf_get_paths() {
+  $paths = &drupal_static(__FUNCTION__, array());
+  if (!$paths) {
+    $paths = module_invoke_all('cacheable_csrf_paths');
+  }
+  return $paths;
+}
+
+/**
+ * Implements hook_menu_alter().
+ */
+function cacheable_csrf_menu_alter(&$items) {
+  $paths = cacheable_csrf_get_paths();
+  foreach ($paths as $path => $data) {
+    if (isset($items[$path])) {
+      $items[$path]['access arguments'][] = $items[$path]['access callback'];
+      // It seems silly to store the router path with the router item, but it's
+      // not possible to call menu_get_item() inside an access callback since
+      // that ends up in infinite recursion. We also need the string with the
+      // actual placeholders from hook_menu(), which is not stored in the router
+      // table.
+      $items[$path]['access arguments'][] = $path;
+      $items[$path]['access callback'] = '_cacheable_csrf_menu_access';
+    }
+  }
+
+  $items['system/ajax']['page arguments'][] = $items['system/ajax']['page callback'];
+  $items['system/ajax']['page callback'] = 'cacheable_csrf_ajax_form_callback';
+}
+
+/**
+ * Implements hook_url_outbound_alter().
+ */
+function cacheable_csrf_url_outbound_alter(&$path, &$options, $original_path) {
+  if (isset($options['query']['token']) && cacheable_csrf_supported_path($original_path)) {
+    $options['query']['token'] = 'disabled';
+    $options['query']['cacheable_csrf_token'] = 'cacheable_csrf_token_placeholder';
+  }
+}
+
+/**
+ * Helper to check whether a router item is supported by cacheable_csrf.
+ *
+ * Partial copy of menu_get_item() that avoids access checks.
+ */
+function cacheable_csrf_supported_path($path) {
+  $router_items = &drupal_static(__FUNCTION__);
+  if (!isset($router_items[$path]) && $paths = cacheable_csrf_get_paths()) {
+    // Rebuild if we know it's needed, or if the menu masks are missing which
+    // occurs rarely, likely due to a race condition of multiple rebuilds.
+    if (variable_get('menu_rebuild_needed', FALSE) || !variable_get('menu_masks', array())) {
+      menu_rebuild();
+    }
+    $original_map = arg(NULL, $path);
+
+    $parts = array_slice($original_map, 0, MENU_MAX_PARTS);
+    $ancestors = menu_get_ancestors($parts);
+    $router_item = db_query_range('SELECT * FROM {menu_router} WHERE path IN (:ancestors) ORDER BY fit DESC', 0, 1, array(':ancestors' => $ancestors))->fetchAssoc();
+    $access_arguments = unserialize($router_item['access_arguments']);
+    $hook_menu_key = array_pop($access_arguments);
+    $router_items[$path] = isset($paths[$hook_menu_key]);
+  }
+  return $router_items[$path];
+}
+
+
+/**
+ * Access callback wrapper that does nasty things to CSRF tokens.
+ */
+function _cacheable_csrf_menu_access() {
+  if (isset($_GET['cacheable_csrf_token'])) {
+    $path_token = $_GET['cacheable_csrf_token'];
+  }
+  elseif (isset($_POST['cacheable_csrf_token'])) {
+    $path_token = $_POST['cacheable_csrf_token'];
+  }
+  // If there's no token available, immediately return FALSE.
+  if (empty($path_token)) {
+    return FALSE;
+  }
+
+  // Check our own CSRF token handling prior to running the original access
+  // callback.
+  $token = drupal_get_token('cacheable_csrf');
+  if (!cacheable_csrf_validate($token)) {
+    // If the token is not valid, set the cookie and return FALSE.
+    // By setting the cookie, this should ensure that the next visit to this
+    // path is successful.
+    cacheable_csrf_set_cookie();
+    return FALSE;
+  }
+
+  $args = func_get_args();
+  $path = array_pop($args);
+  $access_callback = array_pop($args);
+  // If our own CSRF handling has passed, call the original access callback.
+  // CSRF token handling for router items in pluggable in 8.x, but in 7.x
+  // drupal_valid_token() calls are embedded in access callbacks. We can trick
+  // drupal_valid_token() into returning TRUE regardless of the actual token by
+  // setting $_REQUEST['token'] prior to calling the original access callback.
+  if (isset($_REQUEST['token'])) {
+    $original_token = $_REQUEST['token'];
+  }
+  else {
+    $original_token = 'disabled';
+  }
+  // Get the 'data' argument for the drupal_get_token() call.
+  $paths = cacheable_csrf_get_paths();
+  $data = $paths[$path]['data'];
+  $fake_token = drupal_get_token($data);
+
+  // Set both $_REQUEST and $_GET since we're not sure what access callbacks
+  // will use..
+  $_REQUEST['token'] = $fake_token;
+  $_GET['token'] = $fake_token;
+  // Having swapped out $_REQUEST token, we can now call the original access
+  // callback in the knowledge that drupal_valid_token() will return TRUE. Any
+  // other checks should return TRUE or FALSE as normal.
+  $original_access = call_user_func_array($access_callback, $args);
+
+  // Restore the token.
+  $_REQUEST['token'] = $original_token;
+  $_GET['token'] = $original_token;
+
+  return $original_access;
+}
+
+/**
+ * Get the form IDs to replace CSRF handling for.
+ */
+function cacheable_csrf_get_form_ids() {
+  $form_ids = &drupal_static(__FUNCTION__, array());
+  if (!$form_ids) {
+    $form_ids = module_invoke_all('cacheable_csrf_form_ids');
+  }
+  return $form_ids;
+}
+
+
+/**
+ * Implements hook_form_alter().
+ */
+function cacheable_csrf_form_alter(&$form, &$form_state, $form_id) {
+  if (user_is_anonymous()) {
+    return;
+  }
+
+  $base_form_id = isset($form_state['build_info']['base_form_id']) ? $form_state['build_info']['base_form_id'] : NULL;
+
+  // Check for both form ID and base form ID if available.
+  if (!cacheable_csrf_form_id_enabled($form_id, $base_form_id)) {
+    return;
+  }
+
+  // Disable form caching and core's CSRF protection.
+  $form_state['no_cache'] = TRUE;
+  unset($form['#token']);
+  $form['#after_build'][] = 'cacheable_csrf_after_form_build_handler';
+
+  $form['cacheable_csrf_base_form_id'] = array(
+    '#type' => 'hidden',
+    '#value' => $base_form_id,
+  );
+
+  // Placeholder for the cacheable CSRF token.
+  $form['cacheable_csrf_token'] = array(
+    '#type' => 'hidden',
+  );
+
+  // Attachments to set the cacheable CSRF token after cache retrieval.
+  _cacheable_csrf_append_attachments($form);
+
+  // Cache the form arguments for AJAX forms.
+  _cacheable_csrf_cache_set($form, $form_state);
+
+  // Validate against CSRF attacks before other validate handlers run.
+  _cacheable_csrf_form_validate($form_id, $form_state);
+}
+
+/**
+ * Determine whether a form_id is cacheable_csrf enabled.
+ *
+ * @param string $id
+ *   The form ID to check.
+ * @param string $base
+ *   The $base_form_id if available.
+ *
+ * @return bool
+ *   Whether cacheable_csrf is enabled for the form.
+ */
+function cacheable_csrf_form_id_enabled($id, $base) {
+  $map = array_flip(cacheable_csrf_get_form_ids());
+
+  // Check for both form ID and base form ID if available.
+  return isset($map[$id]) || ($base && isset($map[$base]));
+}
+
+/**
+ * Adds attachments that set the correct CSRF token even on cached forms.
+ */
+function _cacheable_csrf_append_attachments(&$form) {
+  $path = drupal_get_path('module', 'cacheable_csrf');
+  $form['#attached']['library'][] = array('system', 'jquery.cookie');
+  $form['#attached']['js'][] = "$path/js/cacheable_csrf.js";
+  $form['#attached']['js'][] = array(
+    'type' => 'setting',
+    'data' => array(
+      'cacheableCsrfCookie' => cacheable_csrf_cookie_name(),
+    ),
+  );
+
+  // Use render_cache.module's post-render callback system to swap in the
+  // correct CSRF token.  This will enable forms faster than the JavaScript,
+  // but is not effective for external caching systems that cache pages
+  // across different sessions.  E.g. Akamai for page caching.
+  $form['#attached']['render_cache_post_render'][] = 'cacheable_csrf_post_render';
+}
+
+/**
+ * Caches form arguments and sets cache_id for retrieval on AJAX form-submit.
+ *
+ * @see cacheable_csrf_ajax_form_callback()
+ */
+function _cacheable_csrf_cache_set(&$form, &$form_state) {
+  // Store the form callback arguments so that they can be retrieved during
+  // AJAX form submissions.
+  $args = $form_state['build_info']['args'];
+  $cid = 'cacheable_csrf:' . md5(serialize($args));
+
+  $form['cache_id'] = array(
+    '#type' => 'hidden',
+    '#value' => $cid,
+  );
+
+  // Cache this for 28 days, but only if it's not already cached or if it's
+  // going to expire in the next 24 hours (86400 seconds).
+  $cache = cache_get($cid, 'cache_form');
+  if (!$cache || $cache->expire <= REQUEST_TIME + 86400) {
+    cache_set($cid, $args, 'cache_form', REQUEST_TIME + 28 * 86400);
+  }
+}
+
+/**
+ * Validates the CSRF token of a form at form-alter-time.
+ */
+function _cacheable_csrf_form_validate($form_id, &$form_state) {
+  // If there is a form submission, validate the token now. This ensures that
+  // the CSRF validation happens before validate/submit handlers get to run.
+  if (
+    !$form_state['programmed']
+    && !empty($form_state['input'])
+    && isset($form_state['input']['form_id'])
+    && $form_state['input']['form_id'] == $form_id
+    && !cacheable_csrf_validate($form_state['input']['cacheable_csrf_token'])
+  ) {
+    // If the token is not valid, set the cookie and fail validation.
+    // By setting the cookie, this should ensure that the next form submission
+    // is successful.
+    cacheable_csrf_set_cookie();
+    $form_state['input'] = array();
+    form_set_error('cacheable_crsf_token', t('There was an error processing your form submission, please try again.'));
+  }
+}
+
+/**
+ * An #after_build callback.
+ */
+function cacheable_csrf_after_form_build_handler($form) {
+  // The form_build_id <input> HTML is not cacheable, because it is unique each
+  // time Drupal builds the form.  This means cacheable_csrf cannot be used
+  // with multi-step forms or similar.
+  unset($form['#build_id'], $form['form_build_id'], $form['form_token']);
+
+  return $form;
+}
+
+/**
+ * Implements cacheable_csrf_form_ids().
+ */
+function cacheable_csrf_cacheable_csrf_form_ids() {
+  return variable_get('cacheable_csrf_form_ids', array());
+}
+
+/**
+ * Implements hook_user_login().
+ */
+function cacheable_csrf_user_login() {
+  cacheable_csrf_set_cookie();
+}
+
+/**
+ * Implements hook_user_logout().
+ */
+function cacheable_csrf_user_logout() {
+  cacheable_csrf_remove_cookie();
+}
+
+/**
+ * Implements hook_init().
+ */
+function cacheable_csrf_init() {
+  // Ensure that the token cookie is set whenever Drupal is fully bootstrapped.
+  if (user_is_logged_in()) {
+    // Overwrite any stale cookie that may have persisted.  E.g. By logging out
+    // in one tab while leaving another open.
+    cacheable_csrf_check_set_cookie();
+  }
+}
+
+/**
+ * Post-render handler to substitute in the correct CSRF token.
+ *
+ * This is only used if render_cache.module is enabled.
+ */
+function cacheable_csrf_post_render($markup) {
+  $placeholder = '<input type="hidden" name="cacheable_csrf_token" value="" />';
+  $replacement = '<input type="hidden" name="cacheable_csrf_token" value="' . cacheable_csrf_get_current() . '" />';
+  return str_replace($placeholder, $replacement, $markup);
+}
+
+/**
+ * Set the token cookie if it's not already set.
+ */
+function cacheable_csrf_set_token() {
+  // If the user deletes their cookies or switches devices, form validation will
+  // fail.
+  drupal_add_http_header('Cache-control', 'no-cache, no-store');
+
+  // Support Akamai Edge-control headers.
+  drupal_add_http_header('Edge-control', 'bypass-cache');
+
+  cacheable_csrf_check_set_cookie();
+
+  // Just print nothing and return.
+  print '';
+  drupal_exit();
+}
+
+/**
+ * Alternative implementation of ajax_form_callback().
+ *
+ * ajax_form_callback() relies on the form cache to discover AJAX forms. This is
+ * incompatible with render caching of forms, so provide an alternative
+ * implementation that skips the form cache check for cacheable_csrf-enabled
+ * forms.
+ *
+ * @todo: normal form callbacks don't bail out in quite the same way. ajax.inc
+ * mentions security but I'd expect CSRF token handling to be enough for that.
+ */
+function cacheable_csrf_ajax_form_callback() {
+  $form_id = $_POST['form_id'];
+  $base_form_id = isset($_POST['cacheable_csrf_base_form_id']) ? $_POST['cacheable_csrf_base_form_id'] : NULL;
+  // If cacheable_csrf is not enabled for this form, fall back to
+  // ajax_form_callback().
+  if (!cacheable_csrf_form_id_enabled($form_id, $base_form_id)) {
+    $args = func_get_args();
+    $callback = array_pop($args);
+    return call_user_func_array($callback, $args);
+  }
+
+  // Retrieve $form_state['build_info']['args'] from cache.
+  $cid = isset($_POST['cache_id']) ? $_POST['cache_id'] : '';
+  if ($cid && $cache = cache_get($cid, 'cache_form')) {
+    $args = $cache->data;
+  }
+  else {
+    // @todo: nice error message? The form will be corrupt if the original args
+    // are not available.
+  }
+  $form_state['build_info']['args'] = $args;
+  // Ensure drupal_build_form() does not redirect.
+  $form_state['no_redirect'] = TRUE;
+  $form = drupal_build_form($form_id, $form_state);
+
+  if (!empty($form_state['triggering_element'])) {
+    $callback = $form_state['triggering_element']['#ajax']['callback'];
+  }
+  if (!empty($callback) && function_exists($callback)) {
+    return $callback($form, $form_state);
+  }
+}
+
+/**
+ * Gets the current token.
+ */
+function cacheable_csrf_get_current() {
+  // Tokens from drupal_get_token() are unique per session.
+  return drupal_get_token('cacheable_csrf');
+}
+
+/**
+ * Gets the token as per the cookie.
+ *
+ * @return String
+ */
+function cacheable_csrf_get_cookie() {
+  $name = cacheable_csrf_cookie_name();
+  return isset($_COOKIE[$name]) ? $_COOKIE[$name] : NULL;
+}
+
+/**
+ * Checks the cookie token, sets cookie if it is invalid.
+ */
+function cacheable_csrf_check_set_cookie() {
+  if (cacheable_csrf_get_cookie() !== cacheable_csrf_get_current()) {
+    cacheable_csrf_set_cookie();
+  }
+}
+
+/**
+ * Validates a token.
+ *
+ * @param $token String
+ *    The token to validate.
+ *
+ * @return Boolean
+ *    TRUE if the token is valid.
+ */
+function cacheable_csrf_validate($token) {
+  $current = cacheable_csrf_get_current();
+  return $current === $token && $current === cacheable_csrf_get_cookie();
+}
+
+/**
+ * Set the token cookie.
+ */
+function cacheable_csrf_set_cookie() {
+  _cacheable_csrf_set_cookie(cacheable_csrf_get_current());
+}
+
+/**
+ * Deletes the cookie.
+ */
+function cacheable_csrf_remove_cookie() {
+  _cacheable_csrf_set_cookie('', REQUEST_TIME - 86400);
+}
+
+function _cacheable_csrf_set_cookie($value, $expire = NULL) {
+  // Support Akamai Edge-control headers.
+  drupal_add_http_header('Edge-Control', 'bypass-cache');
+
+  $params = session_get_cookie_params();
+
+  if (is_null($expire)) {
+    $expire = $params['lifetime'] ? REQUEST_TIME + $params['lifetime'] : 0;
+  }
+
+  setcookie(cacheable_csrf_cookie_name(), $value, $expire, $params['path'], $params['domain'], $params['secure']);
+}
+
+/**
+ * Gets the cookie name, which can be configured per instance.
+ */
+function cacheable_csrf_cookie_name() {
+  return variable_get('cacheable_csrf_cookie_name', 'cacheable_csrf_token');
+}

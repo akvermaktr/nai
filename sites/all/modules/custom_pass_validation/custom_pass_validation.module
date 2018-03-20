@@ -1,0 +1,14 @@
+<?php
+function custom_pass_validation_form_alter(&$form, &$form_state, $form_id) {
+  if ($form_id == 'user_register_form') {
+    $form['#validate'][] = 'custom_pass_validation_user_register_form_validate';
+  }
+}
+/**
+ * Additional handler for user_register_form form validation.
+ */
+function custom_pass_validation_user_register_form_validate($form, &$form_state) {
+  if (!preg_match('/^.*(?=.{10,})(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$/', $form_state['values']['pass'])) {
+    form_set_error('pass', t('Password must be at least 10 characters and contain at least one lower case letter, one upper case letter, one digit and one special character.'));
+  }
+}

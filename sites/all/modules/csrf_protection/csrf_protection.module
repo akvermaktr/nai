@@ -1,0 +1,5 @@
+<?php
+function csrf_protection_init(){
+$test=drupal_get_token('services');
+drupal_add_http_header('X-CSRF-Token', $test);
+}

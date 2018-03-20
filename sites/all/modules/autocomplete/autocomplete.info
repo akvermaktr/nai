@@ -1,0 +1,3 @@
+core = "7.x"
+description = "For Autocomplete OFF and Copy Paste Dissable."
+name = "Autocomplete Module"

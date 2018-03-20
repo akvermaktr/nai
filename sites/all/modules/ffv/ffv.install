@@ -1,0 +1,94 @@
+<?php
+/**
+ * @file
+ * Install file for the validate_string module.
+ */
+
+/**
+ * Implementation of hook_install().
+ */
+
+function ffv_install() {
+  drupal_install_schema('validate_string');
+  drupal_install_schema('validate_fields');
+  $red = new stdClass();
+  $red->validation_type = 'White';
+  $red->validation_str = 'a-z0-9 ';
+  drupal_write_record('validate_string', $red);
+   $red = new stdClass();
+  $red->validation_type = 'Black';
+  $red->validation_str = '<script>
+  							<
+							>';
+  drupal_write_record('validate_string', $red);
+}
+
+function ffv_schema() {
+  $schema['validate_fields'] = array(
+    'description' => 'Stores Validation Fields.',
+    'fields' => array(
+      'id' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Unique identifier for the {Validate-Fields}.',
+      ),   
+	  'validation_type' => array(
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => FALSE,
+        'description' => 'Validation Type key.',
+      ),   
+      'fields_name' => array(
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => FALSE,
+        'description' => 'Fields Name.',
+      ),
+	  'content_type' => array(
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => FALSE,
+        'description' => 'Content Type Name.',
+      )
+    ),
+	'primary key' => array('id'),
+  );
+  $schema['custom_form'] = array(
+    'description' => 'Stores custom Form data.',
+    'fields' => array(
+      'id' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Unique identifier for the {Validate-Fields}.',
+      ),   
+	  'form_id' => array(
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => FALSE,
+        'description' => 'Enter the form ID whom you want to add validation.',
+      ),   
+      'date' => array(
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => FALSE,
+        'description' => 'Fields Name.',
+      ),
+	  'content_type' => array(
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => FALSE,
+        'description' => 'Content Type Name.',
+      )
+    ),
+	'primary key' => array('id'),
+  );
+  return $schema;
+}
+
+function ffv_uninstall() {
+  variable_del('blackbox_pattern');
+  variable_del('whitebox_pattern');
+  drupal_uninstall_schema('validate_string');
+}

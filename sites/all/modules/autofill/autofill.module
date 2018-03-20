@@ -1,0 +1,14 @@
+<?php
+function autofill_form_alter(&$form, &$form_state, $form_id) {
+if($form_id == 'user_login'){
+global $base_url;
+//echo $base_url;
+$form['name']['#attributes']['autocomplete'] ='off';
+$myurl='<a href="'.$base_url.'/user/password/">Forgot your password?</a>';
+//echo $myurl; 
+ $form['links'] = array(
+        array('#markup' => $myurl),
+        '#weight' => 100,
+      );
+}
+}

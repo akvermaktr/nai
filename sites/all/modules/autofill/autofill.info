@@ -1,0 +1,3 @@
+name = AutoFill
+Description = Module to hide Autofill Fields From user Input
+core = 7.x

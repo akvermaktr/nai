@@ -1,0 +1,147 @@
+<?php
+/**
+ * @file
+ * Module file for File Mime Type Checker.
+ */
+
+/**
+ * Implements hook_help().
+ */
+function file_mime_type_checker_help($path, $arg) {
+  switch ($path) {
+    case 'admin/help#file_mime_type_checker':
+      $output = '';
+      $output = '<p>This module performs a server side validation for 
+      the extension of an uploaded file of any content type file field.</p> 
+      <p>User can validate the file field according to the condition(Enable Mime Type Check in file or image field).</p>';
+      $output .= '<p>After enabling this module, please check admin/config/media/mime_type.</p>
+      <p>Here you can set the default value for check mime type of the fields.</p>';
+      $output .= '<p>User can set the mime type checker on the field basis. in the file or image field setting, 
+      user can set mime type checker enable or disable. </p>';
+      return $output;
+  }
+}
+
+/**
+ * Implements hook_permission().
+ */
+function file_mime_type_checker_permission() {
+  return array(
+    'administer mime type form' => array(
+      'title' => t('Administer File mime type checker form'),
+      'description' => t('Allow users to access mime type check form.'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_menu().
+ */
+function file_mime_type_checker_menu() {
+  $items = array();
+  $items['admin/config/media/mime_type'] = array(
+    'title' => 'File Mime Type Checker',
+    'description' => 'Helps detect file mime type for security concern.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('file_mime_type_checker_form'),
+    'access arguments' => array('administer mime type form'),
+    'file' => 'file_mime_type_checker.admin.inc',
+    'type' => MENU_NORMAL_ITEM,
+  );
+  return $items;
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function file_mime_type_checker_form_field_ui_field_edit_form_alter(&$form, &$form_state, $form_id) {
+  // Validation for image or file Field Widget.
+  if ($form['#instance']['widget']['type'] == 'file_generic' || $form['#instance']['widget']['type'] == 'image_image') {
+    $form['field']['file_mime_' . $form['#field']['field_name']] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Enable Mime Type Check'),
+      '#default_value' => (isset($form['#field']['file_mime_' . $form['#field']['field_name']])) ? $form['#field']['file_mime_' . $form['#field']['field_name']] : FALSE,
+    );
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function file_mime_type_checker_form_alter(&$form, &$form_state, $form_id) {
+  if (variable_get('file_mime_type_checker', 'Disable') == 'Enable') {
+    if (isset($form['type']['#value']) && !empty($form['type']['#value'])) {
+      $file_fields = file_mime_type_checker_get_fields('file', $form['type']['#value']);
+      $image_fields = file_mime_type_checker_get_fields('image', $form['type']['#value']);
+      $file_image_mime_type = array_merge($file_fields, $image_fields);
+      foreach ($file_image_mime_type as $field) {
+        if (isset($form[$field])) {
+          if (isset($form[$field]['#language']) && !empty($form[$field]['#language'])) {
+            $entity_language = $form[$field]['#language'];
+          }
+          else {
+            $entity_language = LANGUAGE_NONE;
+          }
+          $field_count = count($form[$field][$entity_language]);
+          for ($i = 0; $i < $field_count; $i++) {
+            if (isset($form[$field][$entity_language][$i])) {
+              $form[$field][$entity_language][$i]['#upload_validators']['file_mime_type_checker_validate'] = array($form[$field][$entity_language][$i]['#upload_validators']['file_validate_extensions'][0]);
+            }
+          }
+        }
+      }
+    }
+    // Validation for Custom filefield validation.
+    foreach ($form as &$element) {
+      if (is_array($element) && !empty($element['#file_check']) && $element['#type'] == 'managed_file') {
+        $element['#upload_validators']['file_mime_type_checker_validate'] = array($element['#upload_validators']['file_validate_extensions'][0]);
+      }
+    }
+  }
+}
+
+/**
+ * Callback for file/image field list details.
+ */
+function file_mime_type_checker_get_fields($type = 'text', $form_type = 'page') {
+  $fields = array();
+  $result = db_query('SELECT n.field_name FROM {field_config} n, {field_config_instance} fci WHERE n.field_name = fci.field_name && fci.bundle = :form_type && n.type = :type', array(':form_type' => $form_type, ':type' => $type));
+  foreach ($result as $record) {
+    $field_info = field_info_field($record->field_name);
+    if (isset($field_info['file_mime_' . $record->field_name]) && !empty($field_info['file_mime_' . $record->field_name])) {
+      if ($field_info['file_mime_' . $record->field_name] == 1) {
+        $fields[] = $record->field_name;
+      }
+    }
+  }
+  return $fields;
+}
+
+/**
+ * Validate callback for file/image module field.
+ */
+function file_mime_type_checker_validate($file, $ext = NULL) {
+  $errors = array();
+  $extension = explode(' ', $ext);
+  $disallow_file_ext = array('octet-stream', 'x-php');
+  $finfo = finfo_open(FILEINFO_MIME_TYPE);
+  if (!$finfo) {
+    $errors[] = t('File Info Library Missing');
+  }
+  else {
+    $filepath = $file->uri;
+    $filemimetype = finfo_file($finfo, $filepath, FILEINFO_MIME_TYPE);
+    $file_image_mime = explode('/', $filemimetype);
+    $ext_match = $file_image_mime[1];
+    if (in_array($ext_match, $disallow_file_ext)) {
+      $errors[] = t('Invalid file type');
+    }
+    else {
+      if (!in_array($ext_match, $extension)) {
+        $errors[] = t('Uploaded file do not match the allowed extensions.');
+      }
+    }
+  }
+  finfo_close($finfo);
+  return $errors;
+}

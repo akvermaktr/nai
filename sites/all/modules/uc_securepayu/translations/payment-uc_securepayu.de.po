@@ -1,0 +1,178 @@
+# German translation of ubercart (6.x-2.0-beta1)
+# Copyright (c) 2009 by the German translation team
+# Generated from files:
+#  uc_securepayu.module,v 1.6.2.4 2008/11/07 21:13:29 islandusurper
+#  uc_securepayu.pages.inc,v 1.1.2.2 2008/11/07 21:13:29 islandusurper
+#  uc_securepayu.info,v 1.3.4.3 2008/11/07 21:13:29 islandusurper
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: ubercart (6.x-2.0-beta1)\n"
+"POT-Creation-Date: 2009-01-18 12:36+0100\n"
+"PO-Revision-Date: 2008-05-13 22:23+0200\n"
+"Language-Team: German\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n!=1);\n"
+
+#: payment/uc_securepayu/uc_securepayu.module:57,137
+msgid "Credit card on a secure server:"
+msgstr "Kreditkarte auf einem sicheren Server:"
+
+#: payment/uc_securepayu/uc_securepayu.module:64
+msgid "Credit card/eCheck"
+msgstr "Kreditkarte / E-Scheck"
+
+#: payment/uc_securepayu/uc_securepayu.module:65
+msgid "Redirect to securepayu to pay by credit card or eCheck."
+msgstr "Zu securepayu weiterleiten, um per Kreditkarte oder eCheck zu bezahlen."
+
+#: payment/uc_securepayu/uc_securepayu.module:88
+msgid "Select your payment type:"
+msgstr "Wählen Sie Ihre Zahlungsart:"
+
+#: payment/uc_securepayu/uc_securepayu.module:91
+msgid "Online check"
+msgstr "Online check"
+
+#: payment/uc_securepayu/uc_securepayu.module:102
+msgid "Vendor account number"
+msgstr "Kontonummer des Verkäufers"
+
+#: payment/uc_securepayu/uc_securepayu.module:103
+msgid "Your securepayu vendor account number."
+msgstr "Ihre securepayu Verkäufer-Kontonummer"
+
+#: payment/uc_securepayu/uc_securepayu.module:109
+msgid "Secret word for order verification"
+msgstr "Geheimes Wort für die Bestellungs-Bestätigung"
+
+#: payment/uc_securepayu/uc_securepayu.module:110
+msgid ""
+"The secret word entered in your securepayu account Look and Feel "
+"settings."
+msgstr "Das Geheimwort Ihrer 2Chekout-Konto \"Look and Feel\" Einstellungen."
+
+#: payment/uc_securepayu/uc_securepayu.module:116
+msgid ""
+"Enable demo mode, allowing you to process fake orders for testing "
+"purposes."
+msgstr "Demo-Modus aktivieren, ermöglicht Testbestellungen."
+
+#: payment/uc_securepayu/uc_securepayu.module:121
+msgid "Language preference"
+msgstr "Sprach-Einstellungen"
+
+#: payment/uc_securepayu/uc_securepayu.module:122
+msgid "Adjust language on securepayu pages."
+msgstr "Sprache für securepayu-Seiten anpassen."
+
+#: payment/uc_securepayu/uc_securepayu.module:124
+msgid "English"
+msgstr "Englisch"
+
+#: payment/uc_securepayu/uc_securepayu.module:125
+msgid "Spanish"
+msgstr "Spanisch"
+
+#: payment/uc_securepayu/uc_securepayu.module:131
+msgid "Allow customers to choose to pay by credit card or online check."
+msgstr "Kunden Bezahlung per Kreditkarte oder Online-Check erlauben."
+
+#: payment/uc_securepayu/uc_securepayu.module:136
+msgid "Payment method title"
+msgstr "Titel der Bezahl-Methode"
+
+#: payment/uc_securepayu/uc_securepayu.module:141
+msgid "Show credit card icons beside the payment method title."
+msgstr "Kreditkarten-Icons neben der Bezahl-Methode anzeigen."
+
+#: payment/uc_securepayu/uc_securepayu.module:147
+msgid ""
+"Provide securepayu specific text for the submit button on the order "
+"review page."
+msgstr ""
+"Geben Sie Text (für securepayu) für den \"Abschicken\" Button auf der "
+"Bestellungs-Vorschau an."
+
+#: payment/uc_securepayu/uc_securepayu.pages.inc:11
+msgid "Receiving new order notification for order !order_id."
+msgstr "Erhalte neue Meldung zur Bestellung !order_id."
+
+#: payment/uc_securepayu/uc_securepayu.pages.inc:16
+msgid ""
+"An error has occurred during payment.  Please contact us to ensure "
+"your order has submitted."
+msgstr ""
+"Während der Bezahlung ist ein Fehler aufgetreten. Bitte Kontaktieren "
+"Sie uns um sicher zu stellen, dass wir Ihre Bestellung erhalten haben."
+
+#: payment/uc_securepayu/uc_securepayu.pages.inc:24
+msgid "Attempted unverified securepayu completion for this order."
+msgstr "Versuchte Bestellung mit ungeprüftem securepayu abzuschliessen."
+
+#: payment/uc_securepayu/uc_securepayu.pages.inc:45
+msgid "Customer used a different e-mail address during payment: !email"
+msgstr ""
+"Kunde brauchte eine andere E-Mail-Adressen während der Bezahlung: "
+"!email"
+
+#: payment/uc_securepayu/uc_securepayu.pages.inc:49
+msgid "Paid by !type, securepayu.com order #!order."
+msgstr "Bezahlt per !type, securepayu.com Bestellung #!order."
+
+#: payment/uc_securepayu/uc_securepayu.pages.inc:49
+msgid "credit card"
+msgstr "Kreditkarte"
+
+#: payment/uc_securepayu/uc_securepayu.pages.inc:49
+msgid "echeck"
+msgstr "eCheck"
+
+#: payment/uc_securepayu/uc_securepayu.pages.inc:53
+msgid ""
+"Your order will be processed as soon as your payment clears at "
+"securepayu.com."
+msgstr ""
+"Ihre Bestellung wird bearbeitet, sobald Ihre Bezahlung auf "
+"securepayu.com erfolgt."
+
+#: payment/uc_securepayu/uc_securepayu.pages.inc:54
+msgid "!type payment is pending approval at securepayu.com."
+msgstr "Bezahlung per \"!type\" muss auf securepayu.com noch genehmigt werden."
+
+#: payment/uc_securepayu/uc_securepayu.pages.inc:54
+msgid "eCheck"
+msgstr "eCheck"
+
+#: payment/uc_securepayu/uc_securepayu.module:0
+msgid "uc_securepayu"
+msgstr "uc_securepayu"
+
+#: payment/uc_securepayu/uc_securepayu.info:0
+msgid "Enable to process payments using securepayu.com."
+msgstr "Ermöglicht eine Abwicklung über securepayu.com"
+
+#: payment/uc_securepayu/uc_securepayu.module:152
+msgid "securepayu.com checkout type"
+msgstr ""
+
+#: payment/uc_securepayu/uc_securepayu.module:153
+msgid ""
+"Single page checkout only works for stores selling intangible products "
+"using credit card payments."
+msgstr ""
+
+#: payment/uc_securepayu/uc_securepayu.module:155
+msgid "Multi-page checkout"
+msgstr ""
+
+#: payment/uc_securepayu/uc_securepayu.module:156
+msgid "Single page checkout"
+msgstr ""
+
+#: payment/uc_securepayu/uc_securepayu.pages.inc:69
+msgid "Click to complete checkout."
+msgstr ""
+

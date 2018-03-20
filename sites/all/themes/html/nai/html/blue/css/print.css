@@ -1,0 +1,7 @@
+@charset "utf-8";
+/* CSS Document */
+
+.header{ background:none;}
+.top-header, .header-right, .nav, .mid .left-panel-box, .footer{ display:none;}
+
+.full-right-panel{ width:100%!important; margin:0;}
