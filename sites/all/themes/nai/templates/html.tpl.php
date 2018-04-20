@@ -42,9 +42,9 @@
  *
  * @ingroup themeable
  */
-?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML+RDFa 1.0//EN"
-  "http://www.w3.org/MarkUp/DTD/xhtml-rdfa-1.dtd">
-<html xml:lang="<?php print $language->language; ?>">
+?><!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?php print $language->language; 
+?>" lang="<?php print $language->language; ?>">
 
 <head>
   <?php print $head; ?>
