@@ -419,9 +419,9 @@ function customer_survey_personal_details_form($form, &$form_state) {
 
     $merchant_key = "gtKFFx";
     $salt = "eCwWELxi";
-    $payu_base_url = "https://test.payu.in/_payment"; // For Test environment
+    //$payu_base_url = "https://test.payu.in/_payment"; // For Test environment
     //secure.payu.in
-    //$payu_base_url = "https://secure.payu.in/_payment"; // For Prod environment
+    $payu_base_url = "https://secure.payu.in/_payment"; // For Prod environment
     //$payu_base_url = 'http://164.100.58.100/page/application';
     $posted = array();
 
