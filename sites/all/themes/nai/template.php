@@ -166,7 +166,7 @@ function nai_breadcrumb($variables) {
     // screen-reader users. Make the heading invisible with .element-invisible.
     $output = '<h3 class="">' . t('You are here') . '</h2>';
 	
-    $output .= '<div class="breadcrumb">' . implode(' › ', $breadcrumb) . '</div>';
+    $output .= '<div class="breadcrumb">' . implode(' ï¿½ ', $breadcrumb) . '</div>';
     return $output;
   }*/
 
@@ -195,6 +195,9 @@ if (!empty($breadcrumb)) {
  }
 function nai_links__locale_block($variables) {
   global $language;
+ 
+  $variables['links']['hi']['attributes']['lang'] = 'hi'; 
+  $variables['links']['en']['attributes']['lang'] = 'en'; 
   unset($variables['links'][$language->language]);
 
   return theme('links', $variables);

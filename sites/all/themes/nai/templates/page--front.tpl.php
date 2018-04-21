@@ -226,13 +226,14 @@
                             </div><!--end of banner-->
                         </div><!--ende of left-part-->
                         <div class="news">
-                            <span><?php $annou = t("Announcement");
+                            <span><?php
+                                $annou = t("Announcement");
                                 print $annou;
                                 ?></span>
 
 
 
-<?php print render($page['highlighted']); ?>
+                            <?php print render($page['highlighted']); ?>
 
 
                             <!--end of news-box-->
@@ -246,7 +247,7 @@
 
                             <div class="tab-box" id="skip">
                                 <div class="tab-content active tab-box">
-<?php print render($page['middle_menu']); ?>
+                                    <?php print render($page['middle_menu']); ?>
 
                                 </div>
 
@@ -254,51 +255,48 @@
                         </div>
 
                         <div class="what-new">
-                            <div><?php $what = t("Whats New");
-print $what;
-?> <p class="n-play-pause">
+                            <h3><?php $what = t("Whats New");
+                                    print $what; ?> <span class="n-play-pause">
                                     <a id="stop" href="#">Stop</a>
                                     <a id="start" href="#">Start</a>
-                                </p><div>
+                                </span></h3>
 <?php print render($page['sidebar_first']); ?>
-                                    <div class="cl"></div>
-                                </div>
-                                <div>  
-                                    <div id="mytest" >
+                            <div class="cl"></div>
+                        </div>
+                        <div>  
+                            <div id="mytest" >
 
 <?php print render($page['right_bottom']); ?>
-                                    </div>
+                            </div>
 
-                                </div>	
-                                <div class="cl">
+                        </div>	
+                        <div class="cl">
 
-                                <?php print render($page['triptych_last']); ?>
-                                </div>
+                        <?php print render($page['triptych_last']); ?>
+                        </div>
 <?php print render($page['footer_slider']); ?>
-                            </div><!--end of container-->
+                    </div><!--end of container-->
 
-                            <div class="cl"></div>
-                            <div class="container">
-                                <div class="footer">
+                    <div class="cl"></div>
+                    <div class="container">
+                        <div class="footer">
 <?php print render($page['footer']); ?>
-                                    <div class="cl"></div>
-                                    <div class="footer-box">
+                            <div class="cl"></div>
+                            <div class="footer-box">
 
 <!--<div class="footerbox-left"><p>Visiter Counter: 1</p></div> --> <!--end of footerbox-left-->
-                                        <div class="footerbox-mid"><p>@ 2017, All rights reserved, National Informatics Centre Services Inc.</p></div><!--end of footerbox-mid-->
-                                        <div class="footerbox-right"><!--<p>Last Updated on 31 March -2015</p>-->
+                                <div class="footerbox-mid"><p>@ 2017, All rights reserved, National Informatics Centre Services Inc.</p></div><!--end of footerbox-mid-->
+                                <div class="footerbox-right"><!--<p>Last Updated on 31 March -2015</p>-->
 <?php print render($page['last_page_updated']); ?>
-                                        </div><!--end of footerbox-right-->
+                                </div><!--end of footerbox-right-->
 
-                                    </div><!--end of footer-box-->
+                            </div><!--end of footer-box-->
 
-                                </div><!--end of footer-->
-                            </div><!--end of container-->
-                            <div class="cl"></div>
-                        </div><!--end of main-->
-                    </div><!--end of some-class-name2-->
-                </div> 
-            </div>
+                        </div><!--end of footer-->
+                    </div><!--end of container-->
+                    <div class="cl"></div>
+                </div><!--end of main-->
+            </div><!--end of some-class-name2-->
         </div> 
-    </div> 
+    </div>
 </div> 
