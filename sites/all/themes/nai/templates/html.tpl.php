@@ -49,6 +49,8 @@
 <head>
   <?php print $head; ?>
   <title><?php print $head_title; ?></title>
+  <meta name="description" content="<?php print $head_title; ?>">
+  <meta name="keywords" content="<?php print $head_title; ?>">
   <?php print $styles; ?>
   <?php print $scripts; ?>
  

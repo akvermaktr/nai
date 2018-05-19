@@ -20,7 +20,15 @@ Drupal.behaviors.my_custom_behavior = {
     // Place your code here.
 	
 	jQuery(".item-list h3 a").removeAttr("href").css("cursor","pointer");
-	
+	$('.nav ul li.menuparent >  a').focus(function() { 
+		$('li.menuparent:not(this)').removeClass('over'); 
+		$(this).parents('li.menuparent').addClass('over');
+	}) 
+
+
+	$('a:not(.nav a)').focus(function(){
+		$('li.menuparent').removeClass('over'); 
+	}) ;
 
   }
 };
