@@ -127,7 +127,9 @@
 
 
                                 <!--end of footerbox-left-->
-                                <div class="footerbox-mid"><p>@ 2017, All rights reserved, National Informatics Centre Services Inc.</p></div><!--end of footerbox-mid-->
+                                <div class="footerbox-mid">
+                                    <?php print render($page['footer_firstcolumn']); ?>
+                                </div>
                                 <div class="footerbox-right">
 <?php print render($page['last_page_updated']); ?>
                                 </div>

@@ -176,20 +176,24 @@ function customer_survey_Basic_details_form($form, &$form_state) {
 
 function MYMODULE_get_tax_term_options($machine_name) {
     //echo $machine_name; exit;
-    $options = array('0' => 'Please Select Value2');
+  
 
     $vid = taxonomy_vocabulary_machine_name_load($machine_name)->vid;
     $options_source = taxonomy_get_tree($vid);
-   // echo "<pre>"; print_r($options_source); echo"</pre>";
-//    $products = db_select('node', 'n')
-//        ->condition('type', 'product')
-//        ->fields('n');
-//    $options_source = $products->execute();
-
+  
+$query = db_query("SELECT taxonomy_term_data.name AS taxonomy_term_data_name, taxonomy_term_data.vid AS taxonomy_term_data_vid, taxonomy_term_data.tid AS tid, taxonomy_vocabulary.machine_name AS taxonomy_vocabulary_machine_name
+FROM 
+{taxonomy_term_data} taxonomy_term_data
+LEFT JOIN {taxonomy_vocabulary} taxonomy_vocabulary ON taxonomy_term_data.vid = taxonomy_vocabulary.vid
+INNER JOIN {field_data_field_active} field_data_field_active ON taxonomy_term_data.tid = field_data_field_active.entity_id AND (field_data_field_active.entity_type = 'taxonomy_term' AND field_data_field_active.deleted = '0')
+WHERE (( (taxonomy_vocabulary.machine_name IN  ('application_from')) AND (field_data_field_active.field_active_value = '1') ))");
+$records = $query->fetchAll();
+//print_r($records);
+$options_source = $records; 
     foreach ($options_source as $item) {
         // echo "<pre>"; print_r($item); echo"</pre>";					
         $key = $item->tid;
-        $value = $item->name. " (" . "NAI-" . $item->tid . ")";
+        $value = $item->taxonomy_term_data_name. " (" . "NAI-" . $item->tid . ")";
         $options[$key] = $value;
     }
     return $options;

@@ -285,7 +285,9 @@
                             <div class="footer-box">
 
 <!--<div class="footerbox-left"><p>Visiter Counter: 1</p></div> --> <!--end of footerbox-left-->
-                                <div class="footerbox-mid"><p>@ 2017, All rights reserved, National Informatics Centre Services Inc.</p></div><!--end of footerbox-mid-->
+                                <div class="footerbox-mid">
+                                    <?php print render($page['footer_firstcolumn']); ?>
+                                </div>
                                 <div class="footerbox-right"><!--<p>Last Updated on 31 March -2015</p>-->
 <?php print render($page['last_page_updated']); ?>
                                 </div><!--end of footerbox-right-->
